@@ -1,19 +1,10 @@
 from typing import List
-
 from pydantic import BaseModel
 from enum import Enum
 
 
-class TextSample(BaseModel):
-    text: str
-
-
 class RequestBody(BaseModel):
-    samples: List[TextSample]
-
-    def to_array(self):
-        return [sample.text for sample in self.samples]
-
+    file: str
 
 class ResponseValues(str, Enum):
     hockey = "rec.sport.hockey"
@@ -22,8 +13,8 @@ class ResponseValues(str, Enum):
 
 
 class ResponseBody(BaseModel):
-    predictions: List[str]
-    probabilities: List[float]
+    class_id: str
+    class_name: str
 
 
 class LabelResponseBody(BaseModel):

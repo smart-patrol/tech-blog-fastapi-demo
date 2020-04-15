@@ -1,28 +1,33 @@
 import os
 import pickle
+import io
+import json
+
+from torchvision import models
+import torchvision.transforms as transforms
+from PIL import Image
 
 from fastapi import FastAPI
-import numpy as np
+
 from aiohttp import ClientSession
 
-from schemas import (
-    RequestBody,
-    ResponseBody,
-    LabelResponseBody,
-    ResponseValues,
-    TextSample,
-)
-
+from schemas import ResponseBody, RequestBody
+#    LabelResponseBody,
+#    ResponseValues,
+#    TextSample,
+#)
 
 app = FastAPI(
-    title="simple-model",
-    description="a simple model-serving skateboard in FastAPI",
+    title="image-net-classifier",
+    description="a model to classify images",
     version="0.1",
 )
 
+imagenet_class_index = json.load(open('imagenet_class_index.json'))
+model = models.resnet18(pretrained=True)
+model.eval()
 
-with open(os.getenv("MODEL_PATH"), "rb") as rf:
-    clf = pickle.load(rf)
+from helpers import get_prediction,transform_image
 
 client_session = ClientSession()
 
@@ -38,40 +43,14 @@ async def healthcheck():
 
 @app.post("/predict", response_model=ResponseBody)
 async def predict(body: RequestBody):
-    data = np.array(body.to_array())
 
-    probas = clf.predict_proba(data)
-    predictions = probas.argmax(axis=1)
-
-    return {
-        "predictions": (
-            np.tile(clf.classes_, (len(predictions), 1))[
-                np.arange(len(predictions)), predictions
-            ].tolist()
-        ),
-        "probabilities": probas[np.arange(len(predictions)), predictions].tolist(),
-    }
-
-
-@app.post("/predict/{label}", response_model=LabelResponseBody)
-async def predict_label(label: ResponseValues, body: RequestBody):
-    data = np.array(body.to_array())
-
-    probas = clf.predict_proba(data)
-    target_idx = clf.classes_.tolist().index(label.value)
-
-    return {"label": label.value, "probabilities": probas[:, target_idx].tolist()}
-
-
-@app.get("/cat-facts", response_model=TextSample)
-async def cat_facts():
-    url = "https://cat-fact.herokuapp.com/facts/random"
-    async with client_session.get(url) as resp:
-        response = await resp.json()
-
-    return response
-
+    img_bytes = body.file.read()
+    class_id, class_name = get_prediction(image_bytes=img_bytes)
+    
+    return {'class_id': class_id, 'class_name': class_name}
 
 @app.on_event("shutdown")
 async def cleanup():
     await client_session.close()
+
+
