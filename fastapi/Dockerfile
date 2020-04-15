@@ -12,6 +12,5 @@ RUN \
 
 COPY ./requirements.txt ./requirements.txt
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN rm -rf /root/.cache
+RUN pip install -r requirements.txt && \ 
+ rm -rf /root/.cache
