@@ -29,3 +29,6 @@ class ResponseBody(BaseModel):
 class LabelResponseBody(BaseModel):
     label: str
     probabilities: List[float]
+
+class HearbeatResult(BaseModel):
+    is_alive: bool
