@@ -1,9 +1,11 @@
 import os
 import pickle
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import numpy as np
 from aiohttp import ClientSession
+
+from core import security
 
 import logging
 logger = logging.getLogger("LOGGER")
@@ -65,7 +67,7 @@ authenticated: bool = Depends(security.validate_request)):
     probas = clf.predict_proba(data)
     target_idx = clf.classes_.tolist().index(label.value)
 
-    logger.info(probs)
+    logger.info(probas)
 
     return {"label": label.value, "probabilities": probas[:, target_idx].tolist()}
 

@@ -1,14 +1,15 @@
 version: "3.7"
 
 services:
-  
+
   fastapi: &fastapi-app-base
     build:
-      context: ./fastapi
+      context: ./api
     volumes:
       - ./ml-models:/opt/app/ml-models
-      - ./fastapi/app.py:/opt/app/app.py
-      - ./fastapi/schemas.py:/opt/app/schemas.py
+      - ./api/app.py:/opt/app/app.py
+      - ./api/schemas.py:/opt/app/schemas.py
+      - ./api/core:/opt/api/core
       - ./gunicorn.py:/opt/app/gunicorn.py
     ports:
       - "5001:5000"

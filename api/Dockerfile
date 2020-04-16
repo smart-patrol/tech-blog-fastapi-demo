@@ -8,5 +8,7 @@ RUN \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt ./requirements.txt
+COPY ./model.pkl ./model.pkl
+COPY ./core ./core
 
 RUN pip install -r requirements.txt
