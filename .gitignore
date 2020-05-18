@@ -9,3 +9,4 @@ __pycache__
 .python-version
 *.pkl
 .DS_Store
+*.DS_Store
