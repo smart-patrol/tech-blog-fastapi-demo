@@ -12,13 +12,13 @@ services:
       - ./api/core:/opt/api/core
       - ./gunicorn.py:/opt/app/gunicorn.py
     ports:
-      - "5001:5000"
+      - "8001:8000"
     env_file:
       - ./envs/.env
     command: /bin/bash
   fastapi-app-dev:
     <<: *fastapi-app-base
-    command: uvicorn --reload --workers 1 --host 0.0.0.0 --port 5000 app:app
+    command: uvicorn --reload --workers 1 --host 0.0.0.0 --port 8000 app:app
   fastapi-app-prod:
     <<: *fastapi-app-base
     environment:

@@ -3,7 +3,6 @@
 from typing import Callable
 
 from fastapi import FastAPI
-from loguru import logger
 
 from fastapi_skeleton.core.config import MODEL_PATH
 from fastapi_skeleton.services.models import HousePriceModel
