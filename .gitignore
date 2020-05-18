@@ -8,3 +8,4 @@ __pycache__
 *.mypy_cache
 .python-version
 *.pkl
+.DS_Store
